@@ -52,9 +52,21 @@ public class InOrderParkingStrategyTest {
   public void testPark_givenNoAvailableParkingLot_thenCreateNoSpaceReceipt() {
 
     /* Exercise 2: Test park() method. Use Mockito.spy and Mockito.verify to test the situation for no available parking lot */
-
     //given
-    ParkingLot parkingLot = new ParkingLot("A1",0);
+    Car car = new Car("car");
+    InOrderParkingStrategy inOrderParkingStrategy = spy(new InOrderParkingStrategy());
+    //when
+    when(inOrderParkingStrategy.park(null, car)).thenCallRealMethod();
+    //then
+    verify(inOrderParkingStrategy, times(1)).park(null, car);
+  }
+
+  @Test
+  public void testPark_givenThereIsOneParkingLotWithSpace_thenCreateReceipt() {
+
+    /* Exercise 2: Test park() method. Use Mockito.spy and Mockito.verify to test the situation for one available parking lot */
+    //given
+    ParkingLot parkingLot = new ParkingLot("A1",1);
     List<ParkingLot> parkingLotList = new ArrayList<>();
     parkingLotList.add(parkingLot);
     Car car = new Car("car");
@@ -62,21 +74,22 @@ public class InOrderParkingStrategyTest {
     //when
     when(inOrderParkingStrategy.park(parkingLotList,car)).thenCallRealMethod();
     //then
-    verify(inOrderParkingStrategy,times(1)).park(parkingLotList,car);
-  }
-
-  @Test
-  public void testPark_givenThereIsOneParkingLotWithSpace_thenCreateReceipt() {
-
-    /* Exercise 2: Test park() method. Use Mockito.spy and Mockito.verify to test the situation for one available parking lot */
-
+    verify(inOrderParkingStrategy, times(1)).park(parkingLotList, car);
   }
 
   @Test
   public void testPark_givenThereIsOneFullParkingLot_thenCreateReceipt() {
 
     /* Exercise 2: Test park() method. Use Mockito.spy and Mockito.verify to test the situation for one available parking lot but it is full */
-
+    ParkingLot parkingLot = new ParkingLot("A1",1);
+    List<ParkingLot> parkingLotList = new ArrayList<>();
+    parkingLotList.add(parkingLot);
+    Car car = new Car("car");
+    InOrderParkingStrategy inOrderParkingStrategy = spy(new InOrderParkingStrategy());
+    //when
+    when(inOrderParkingStrategy.park(parkingLotList, car)).thenCallRealMethod();
+    //then
+    verify(inOrderParkingStrategy, times(1)).park(parkingLotList, car);
   }
 
   @Test
