@@ -8,6 +8,7 @@ import org.apache.commons.collections.CollectionUtils;
 
 public class InOrderParkingStrategy implements ParkingStrategy {
 
+	@Override
 	public Receipt park(List<ParkingLot> parkingLots, Car car) {
 
 		parkingLots = Optional.ofNullable(parkingLots).orElse(new ArrayList<>());
