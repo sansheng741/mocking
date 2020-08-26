@@ -2,6 +2,7 @@ package parking;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
@@ -11,6 +12,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
+import org.mockito.Mock;
 
 public class InOrderParkingStrategyTest {
 
@@ -55,10 +57,11 @@ public class InOrderParkingStrategyTest {
     //given
     Car car = new Car("car");
     InOrderParkingStrategy inOrderParkingStrategy = spy(new InOrderParkingStrategy());
+    when(inOrderParkingStrategy.createNoSpaceReceipt(car)).thenReturn(new Receipt());
     //when
-    when(inOrderParkingStrategy.park(null, car)).thenCallRealMethod();
+    inOrderParkingStrategy.park(null,car);
     //then
-    verify(inOrderParkingStrategy, times(1)).park(null, car);
+    verify(inOrderParkingStrategy, times(1)).createNoSpaceReceipt(car);
   }
 
   @Test
@@ -71,32 +74,51 @@ public class InOrderParkingStrategyTest {
     parkingLotList.add(parkingLot);
     Car car = new Car("car");
     InOrderParkingStrategy inOrderParkingStrategy = spy(new InOrderParkingStrategy());
+    when(inOrderParkingStrategy.createReceipt(parkingLot,car)).thenReturn(new Receipt());
     //when
-    when(inOrderParkingStrategy.park(parkingLotList,car)).thenCallRealMethod();
+    Receipt receipt = inOrderParkingStrategy.park(parkingLotList, car);
     //then
-    verify(inOrderParkingStrategy, times(1)).park(parkingLotList, car);
+    verify(inOrderParkingStrategy, times(1)).createReceipt(parkingLot,car);
+    assertNotNull(receipt);
   }
 
   @Test
   public void testPark_givenThereIsOneFullParkingLot_thenCreateReceipt() {
 
     /* Exercise 2: Test park() method. Use Mockito.spy and Mockito.verify to test the situation for one available parking lot but it is full */
-    ParkingLot parkingLot = new ParkingLot("A1",1);
+    ParkingLot parkingLot = new ParkingLot("A1",0);
     List<ParkingLot> parkingLotList = new ArrayList<>();
     parkingLotList.add(parkingLot);
     Car car = new Car("car");
     InOrderParkingStrategy inOrderParkingStrategy = spy(new InOrderParkingStrategy());
+    when(inOrderParkingStrategy.createNoSpaceReceipt(car)).thenReturn(new Receipt());
     //when
-    when(inOrderParkingStrategy.park(parkingLotList, car)).thenCallRealMethod();
+    inOrderParkingStrategy.park(parkingLotList,car);
     //then
-    verify(inOrderParkingStrategy, times(1)).park(parkingLotList, car);
+    verify(inOrderParkingStrategy, times(1)).createNoSpaceReceipt(car);
   }
 
   @Test
   public void testPark_givenThereIsMultipleParkingLotAndFirstOneIsFull_thenCreateReceiptWithUnfullParkingLot() {
 
     /* Exercise 3: Test park() method. Use Mockito.spy and Mockito.verify to test the situation for multiple parking lot situation */
-
+    //given
+    ParkingLot parkingLot1 = new ParkingLot("A1",0);
+    ParkingLot parkingLot2 = new ParkingLot("A2",1);
+    List<ParkingLot> parkingLotList = new ArrayList<>();
+    parkingLotList.add(parkingLot1);
+    parkingLotList.add(parkingLot2);
+    Car car = new Car("car");
+    InOrderParkingStrategy inOrderParkingStrategy = spy(new InOrderParkingStrategy());
+    Receipt receipt = new Receipt();
+    receipt.setParkingLotName("A2");
+    receipt.setCarName("car");
+    when(inOrderParkingStrategy.createReceipt(parkingLot2,car)).thenReturn(receipt);
+    //when
+    Receipt receiptResult = inOrderParkingStrategy.park(parkingLotList, car);
+    //then
+    verify(inOrderParkingStrategy, times(1)).createReceipt(parkingLot2,car);
+    assertEquals("A2",receiptResult.getParkingLotName());
   }
 
 
