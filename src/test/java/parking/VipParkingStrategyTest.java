@@ -3,10 +3,15 @@ package parking;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
+@RunWith(MockitoJUnitRunner.class)
 public class VipParkingStrategyTest {
 
 	@Test
@@ -49,6 +54,12 @@ public class VipParkingStrategyTest {
         assertNull(receipt);
     }
 
+    @InjectMocks
+    VipParkingStrategy vipParkingStrategy;
+
+	  @Mock
+    CarDaoImpl carDao;
+
     @Test
     public void testIsAllowOverPark_givenCarNameContainsCharacterAAndIsVipCar_thenReturnTrue(){
 
@@ -56,6 +67,18 @@ public class VipParkingStrategyTest {
          * You may refactor the code, or try to use
          * use @RunWith(MockitoJUnitRunner.class), @Mock (use Mockito, not PowerMock) and @InjectMocks
          */
+        //given
+        ParkingLot parkingLot = new ParkingLot("park1",1);
+        List<ParkingLot> parkingLotList = new ArrayList<>();
+        parkingLotList.add(parkingLot);
+        String carName = "A2";
+        Car car = new Car(carName);
+        when(carDao.isVip(carName)).thenReturn(true);
+        //when
+        boolean allowOverPark = vipParkingStrategy.isAllowOverPark(car);
+        //then
+        assertTrue(allowOverPark);
+
     }
 
     @Test
